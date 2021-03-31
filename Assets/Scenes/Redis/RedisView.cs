@@ -1,3 +1,4 @@
+using StackExchange.Redis;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -32,7 +33,8 @@ public class RedisView : MonoBehaviour {
     }
     private void Update() {
         if (redis.CurrConnectionStat == RedisService.ConnectionStat.None) {
-            redis.Connect(server);
+            var config = ConfigurationOptions.Parse(server);
+            redis.Connect(config);
         }
     }
     #endregion
