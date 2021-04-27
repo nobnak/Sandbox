@@ -23,13 +23,10 @@ public class RedisService : System.IDisposable {
     public ConnectionMultiplexer CurrRedis { get; protected set; }
     public bool IsConnected => connStat == ConnectionStat.Connected && CurrRedis.IsConnected;
 
-    public RedisService Connect(string config) {
-        return Connect(ConfigurationOptions.Parse(config));
+    public RedisService ConnectAsync(string config) {
+        return ConnectAsync(ConfigurationOptions.Parse(config));
     }
-    public RedisService Connect(ConfigurationOptions config) {
-        if (taskConnection != null) {
-            taskConnection.Dispose();
-        }
+    public RedisService ConnectAsync(ConfigurationOptions config) {
         Disconnect();
 
         connStat = ConnectionStat.Connecting;
@@ -49,7 +46,28 @@ public class RedisService : System.IDisposable {
             });
         return this;
     }
+    public bool Connect(string config) {
+        return Connect(ConfigurationOptions.Parse(config));
+    }
+    public bool Connect(ConfigurationOptions config) {
+        try {
+            Disconnect();
+
+            connStat = ConnectionStat.Connecting;
+            CurrRedis = ConnectionMultiplexer.Connect(config);
+        }catch(System.Exception e) {
+            Debug.LogWarning(e);
+        }
+
+        var res = CurrRedis != null;
+        connStat = res ? ConnectionStat.Connected : ConnectionStat.None;
+        return res;
+    }
     public RedisService Disconnect() {
+        if (taskConnection != null) {
+            taskConnection.Dispose();
+            taskConnection = null;
+        }
         if (CurrRedis != null) {
             CurrRedis.Dispose();
             CurrRedis = null;

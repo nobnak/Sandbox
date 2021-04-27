@@ -23,6 +23,12 @@ public class RedisView : MonoBehaviour {
     private void OnEnable() {
         redis = new RedisService();
         guiStopwatch = new System.Diagnostics.Stopwatch();
+
+        enabled = redis.Connect(server);
+
+        var db = redis.GetDB();
+        db.StringSet("test_key", "test_val");
+        Debug.Log($"Get data : {db.StringGet("test_key")}");
     }
     private void OnDisable() {
         redis?.Dispose();
@@ -34,7 +40,8 @@ public class RedisView : MonoBehaviour {
     private void Update() {
         if (redis.CurrConnectionStat == RedisService.ConnectionStat.None) {
             var config = ConfigurationOptions.Parse(server);
-            redis.Connect(config);
+            redis.ConnectAsync(config);
+            Debug.Log($"Connect async");
         }
     }
     #endregion
