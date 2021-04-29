@@ -1,6 +1,3 @@
-[submodule "Assets/Packages/Gist"]
-	path = Assets/Packages/Gist
-	url = https://github.com/nobnak/Gist.git
 [submodule "Assets/Packages/CloudStructureForUnity"]
 	path = Assets/Packages/CloudStructureForUnity
 	url = https://github.com/nobnak/CloudStructureForUnity.git
